@@ -15,35 +15,35 @@ public:
     // Getters for private variables
     string getName() {
         return name;
-    };
+    }
     int getShotsTaken() {
         return shotsTaken;
-    };
+    }
     int getShotsMade() {
         return shotsMade;
-    };
+    }
     int getPassesAttempted() {
         return passesAttempted;
-    };
+    }
     int getPassesMade() {
         return passesMade;
-    };
-
-    //Setters for private variables 
-    void setShotsTaken(int a) {
-        shotsTaken += a;
-    };
-    void setShotsMade(int a) {
-        shotsMade += a;
-    };
-    void setPassesAttempted(int a) {
-        passesAttempted += 1;
-    };
-    void setPassesMade(int a) {
-        passesMade += 1;
     }
 
-    bool passBall(player currentPlayer) {
+    //Setters for private variables 
+    void setShotsTaken() {
+        shotsTaken++;
+    }
+    void setShotsMade() {
+        shotsMade++;
+    }
+    void setPassesAttempted() {
+        passesAttempted++;
+    }
+    void setPassesMade() {
+        passesMade++;
+    }
+
+    bool passBall(player& currentPlayer) {
         int passesAttempted = currentPlayer.getPassesAttempted();
         int passesMade = currentPlayer.getPassesMade();
 
@@ -51,18 +51,18 @@ public:
         double passPercentage = static_cast<double>(passesMade) / static_cast<double>(passesAttempted);
 
         if (passChance > (passPercentage + 50)) {
-            currentPlayer.setPassesAttempted(1);
-            cout << "Pass unsuccessful." << endl;
+            currentPlayer.setPassesAttempted();
+            cout << "Pass unsuccessful.\n" << endl;
             return false;
         }
         else {
-            currentPlayer.setPassesMade(1);
-            cout << "Pass successful." << endl;
+            currentPlayer.setPassesMade();
+            cout << "Pass successful.\n" << endl;
             return true;
         }
     }
 
-    int takeShot(player currentPlayer) {
+    int takeShot(player& currentPlayer) {
         int shotsTaken = currentPlayer.getShotsTaken();
         int shotsMade = currentPlayer.getShotsMade();
         double shootingPercentage;
@@ -79,28 +79,29 @@ public:
         }
 
         if (points == 1) {
-            shotChance = rand() % 70 + 1;
+            shotChance = (rand() % 70 + 1);
         }
         else if (points == 2) {
-            shotChance = rand() % 100 + 1;
+            shotChance = (rand() % 100 + 1);
         }
         else if (points == 3) {
-            shotChance = rand() % 125 + 1;
+            shotChance = (rand() % 125 + 1);
         }
         else {
-            cout << "Invalid number of points.\n";
+            cout << "Invalid number of points.\n\n";
         }
 
-        cout << "Random number generated: " << shotChance << " Shooting percentage: " << shootingPercentage << endl;
+        cout << "Random number generated: " << shotChance << " Shooting percentage: " << shootingPercentage << "\n" << endl;
 
         if (shotChance < (shootingPercentage + 50)) {
-            cout << "Shot successful.\n";
-            currentPlayer.setShotsMade(1);
+            cout << "Shot successful.\n" << endl;
+            currentPlayer.setShotsMade();
             return points;
         }
         else {
-            currentPlayer.setShotsTaken(1);
-            cout << "Shot unsuccessful.\n";
+            currentPlayer.setShotsTaken();
+            cout << "Shot unsuccessful.\n" << endl;
+            return 0;
         }
     }
 };
@@ -108,16 +109,18 @@ public:
 int OpposingTeamPossesion(int opponentscore) {
     cout << "***********************************************\n";
     while (true) {
+        cout << "Opposing team attempting shot...\n\n";
         bool shotMade = (rand() % 100) < 60;
 
         if (shotMade) {
-            cout << "Opposing team made the shot! (2 Points)\n";
+            cout << "Opposing team made the shot! (2 Points)\n\n";
             opponentscore += 2;
         }
         else {
+            cout << "Opposing team missed the shot!\n" << "Opposing team attempting rebound...\n\n";
             bool rebound = (rand() % 100) < 50;
             if (rebound) {
-                cout << "Opposing team made the rebound!\n";
+                cout << "Opposing team made the rebound!\n\n";
             }
             else {
                 cout << "Opposing team missed the rebound... Its your ball!\n";
@@ -125,7 +128,7 @@ int OpposingTeamPossesion(int opponentscore) {
             }
         }
     }
-    cout << "***********************************************\n";
+    cout << "***********************************************\n\n";
     return opponentscore;
 }
 
@@ -143,7 +146,10 @@ int main() {
     int team1possessions = 0;
     int team2possessions = 0;
     player currentPlayer = pickplayer(playernames);
-    while (team1possessions < 30 && team2possessions < 30) {
+    cout << "*****************************************\n" << "New game has been started.\n"<< endl << "Player " << currentPlayer.getName()
+        << " currently has the ball.\n" << endl;
+
+    while (team1possessions < 5 && team2possessions < 5) {
         // Asks the user to choose an option, moves to what they chose
         cout << "Choose an Action:\n 1. Shoot \n 2. Pass \n 3. See Player Stats \n 4. See score\n";
         int choice;
@@ -158,6 +164,7 @@ int main() {
                 if (not chance) {
                     team1possessions += 1;
                     currentPlayer = opposingTeam;
+                    cout << "You lost possession of the ball!\n";
                     score2 = OpposingTeamPossesion(score2);
                     team2possessions += 1;
                     currentPlayer = pickplayer(playernames);
@@ -176,10 +183,12 @@ int main() {
                 cout << "Current player in possession: " << currentPlayer.getName() << "\n";
             }
             else {
+                cout << "You lost the ball!\n";
                 currentPlayer = opposingTeam;
                 score2 = OpposingTeamPossesion(score2);
                 team2possessions += 1;
                 currentPlayer = pickplayer(playernames);
+                cout << "Current player in possession of the ball: " << currentPlayer.getName() << endl;
             }
         }
         //print stats
