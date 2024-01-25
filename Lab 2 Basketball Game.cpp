@@ -106,7 +106,7 @@ public:
     }
 };
 
-int OpposingTeamPossesion(int opponentscore) {
+int OpposingTeamPossesion(int& opponentscore) {
     cout << "***********************************************\n";
     while (true) {
         cout << "Opposing team attempting shot...\n\n";
@@ -117,18 +117,18 @@ int OpposingTeamPossesion(int opponentscore) {
             opponentscore += 2;
         }
         else {
-            cout << "Opposing team missed the shot!\n" << "Opposing team attempting rebound...\n\n";
+            cout << "Opposing team missed the shot!\n\n" << "Opposing team attempting rebound...\n\n";
             bool rebound = (rand() % 100) < 50;
             if (rebound) {
                 cout << "Opposing team made the rebound!\n\n";
             }
             else {
                 cout << "Opposing team missed the rebound... Its your ball!\n";
+                cout << "***********************************************\n";
                 return false;
             }
         }
     }
-    cout << "***********************************************\n\n";
     return opponentscore;
 }
 
@@ -149,7 +149,7 @@ int main() {
     cout << "*****************************************\n" << "New game has been started.\n"<< endl << "Player " << currentPlayer.getName()
         << " currently has the ball.\n" << endl;
 
-    while (team1possessions < 5 && team2possessions < 5) {
+    while (team1possessions < 2 && team2possessions < 2) {
         // Asks the user to choose an option, moves to what they chose
         cout << "Choose an Action:\n 1. Shoot \n 2. Pass \n 3. See Player Stats \n 4. See score\n";
         int choice;
@@ -165,7 +165,7 @@ int main() {
                     team1possessions += 1;
                     currentPlayer = opposingTeam;
                     cout << "You lost possession of the ball!\n";
-                    score2 = OpposingTeamPossesion(score2);
+                    score2 += OpposingTeamPossesion(score2);
                     team2possessions += 1;
                     currentPlayer = pickplayer(playernames);
                 }
@@ -185,7 +185,7 @@ int main() {
             else {
                 cout << "You lost the ball!\n";
                 currentPlayer = opposingTeam;
-                score2 = OpposingTeamPossesion(score2);
+                score2 += OpposingTeamPossesion(score2);
                 team2possessions += 1;
                 currentPlayer = pickplayer(playernames);
                 cout << "Current player in possession of the ball: " << currentPlayer.getName() << endl;
@@ -206,5 +206,14 @@ int main() {
             cout << "Current score: " << score1 << "  -  " << score2 << endl;
         }
     }
+    string winner;
+    if (score1 > score2) {
+        winner = "Player's team!";
+    }
+    else {
+        winner = "Opposing team!";
+    }
+    cout << "Game over!\n" << "Winner: " << winner << endl;
+    cout << "The final score was: " << score1 << " - " << score2 << endl;
 }
 
