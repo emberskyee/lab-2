@@ -89,6 +89,7 @@ public:
         }
         else {
             cout << "Invalid number of points.\n\n";
+            return 0;
         }
 
         cout << "Random number generated: " << shotChance << " Shooting percentage: " << shootingPercentage << "\n" << endl;
