@@ -113,8 +113,9 @@ int OpposingTeamPossesion(int& opponentscore) {
         bool shotMade = (rand() % 100) < 60;
 
         if (shotMade) {
-            cout << "Opposing team made the shot! (2 Points)\n\n";
+            cout << "Opposing team made the shot! (2 Points) It's your ball!\n\n";
             opponentscore += 2;
+            return false;
         }
         else {
             cout << "Opposing team missed the shot!\n\n" << "Opposing team attempting rebound...\n\n";
