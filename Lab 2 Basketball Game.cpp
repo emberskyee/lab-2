@@ -113,7 +113,8 @@ int OpposingTeamPossesion(int& opponentscore) {
         bool shotMade = (rand() % 100) < 60;
 
         if (shotMade) {
-            cout << "Opposing team made the shot! (2 Points) It's your ball!\n\n";
+            cout << "Opposing team made the shot! (2 Points) It's Your ball!\n";
+            cout << "***********************************************\n";
             opponentscore += 2;
             return false;
         }
@@ -134,24 +135,24 @@ int OpposingTeamPossesion(int& opponentscore) {
 }
 
 player pickplayer(player playernames[5]) {
-    int randomnumber = (rand() % 5) + 1;
-    player playerName = playernames[randomnumber - 1];
-    return playerName;
+    int randomnumber = (rand() % 5);
+    return playernames[randomnumber];
+    
 }
 
 int main() {
-    player playernames[5] = { player("P1"),player("P2"),player("P3"),player("P4"),player("P5") };
+    player playernames[5] = { player("Lebron"),player("MJ"),player("Kobe"),player("Steph"),player("Jokic") };
     player opposingTeam(player("opposing"));
     int score1 = 0;
     int score2 = 0;
     int team1possessions = 0;
     int team2possessions = 0;
     player currentPlayer = pickplayer(playernames);
-    cout << "*****************************************\n" << "New game has been started.\n"<< endl << "Player " << currentPlayer.getName()
-        << " currently has the ball.\n" << endl;
+    cout << "*****************************************\n" << "New game has been started.\n"<< endl; 
 
-    while (team1possessions < 2 && team2possessions < 2) {
+    while (team1possessions < 10 && team2possessions < 10) {
         // Asks the user to choose an option, moves to what they chose
+        cout << currentPlayer.getName() << " currently has the ball." << endl;
         cout << "Choose an Action:\n 1. Shoot \n 2. Pass \n 3. See Player Stats \n 4. See score\n";
         int choice;
         cin >> choice;
@@ -161,8 +162,8 @@ int main() {
             int shotPoints = currentPlayer.takeShot(currentPlayer);
             score1 += shotPoints;
             if (shotPoints == 0) {
-                bool chance = rand() % 100 < 50;
-                if (not chance) {
+                bool rebound = (rand() % 100) < 50;
+                if (!(rebound)) {
                     team1possessions += 1;
                     currentPlayer = opposingTeam;
                     cout << "You lost possession of the ball!\n";
@@ -170,18 +171,29 @@ int main() {
                     team2possessions += 1;
                     currentPlayer = pickplayer(playernames);
                 }
+                else{
+                    cout << "You made the rebound! Choose next action. \n";
+                }
             }
+            else{
+                currentPlayer = opposingTeam;
+
+                score2 += OpposingTeamPossesion(score2);
+                team2possessions += 1;
+                currentPlayer = pickplayer(playernames);
+            }
+            
 
         }
         //pass
         else if (choice == 2) {
             int passedTo;
-            cout << "Choose a player to pass the ball to: 1, 2, 3, 4, 5\n";
+            cout << "Choose a player to pass the ball to: 1. Lebron , 2. MJ , 3. Kobe, 4, Steph , 5. Jokic\n";
             cin >> passedTo;
             bool pass = currentPlayer.passBall(currentPlayer);
             if (pass) {
                 currentPlayer = playernames[passedTo - 1];
-                cout << "Current player in possession: " << currentPlayer.getName() << "\n";
+            
             }
             else {
                 cout << "You lost the ball!\n";
@@ -217,4 +229,3 @@ int main() {
     cout << "Game over!\n" << "Winner: " << winner << endl;
     cout << "The final score was: " << score1 << " - " << score2 << endl;
 }
-
