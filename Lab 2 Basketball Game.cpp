@@ -113,7 +113,8 @@ int OpposingTeamPossesion(int& opponentscore) {
         bool shotMade = (rand() % 100) < 60;
 
         if (shotMade) {
-            cout << "Opposing team made the shot! (2 Points) It's your ball!\n\n";
+            cout << "Opposing team made the shot! (2 Points) It's Your ball!\n";
+            cout << "***********************************************\n";
             opponentscore += 2;
             return false;
         }
@@ -135,8 +136,8 @@ int OpposingTeamPossesion(int& opponentscore) {
 
 player pickplayer(player playernames[5]) {
     int randomnumber = (rand() % 5) + 1;
-    player playerName = playernames[randomnumber - 1];
-    return playerName;
+    return playernames[randomnumber - 1];
+    
 }
 
 int main() {
@@ -161,8 +162,8 @@ int main() {
             int shotPoints = currentPlayer.takeShot(currentPlayer);
             score1 += shotPoints;
             if (shotPoints == 0) {
-                bool chance = rand() % 100 < 50;
-                if (not chance) {
+                bool rebound = (rand() % 100) < 50;
+                if (!(rebound)) {
                     team1possessions += 1;
                     currentPlayer = opposingTeam;
                     cout << "You lost possession of the ball!\n";
@@ -170,7 +171,18 @@ int main() {
                     team2possessions += 1;
                     currentPlayer = pickplayer(playernames);
                 }
+                else{
+                    cout << "You made the rebound! Choose next action. \n";
+                }
             }
+            else{
+                currentPlayer = opposingTeam;
+
+                score2 += OpposingTeamPossesion(score2);
+                team2possessions += 1;
+                currentPlayer = pickplayer(playernames);
+            }
+            
 
         }
         //pass
