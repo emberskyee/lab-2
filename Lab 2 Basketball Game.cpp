@@ -75,7 +75,7 @@ public:
             shootingPercentage = 0;
         }
         else {
-            shootingPercentage = static_cast<double>(shotsMade) / static_cast<double>(shotsTaken);
+            shootingPercentage = (static_cast<double>(shotsMade) / static_cast<double>(shotsTaken))*100;
         }
 
         if (points == 1) {
@@ -89,14 +89,14 @@ public:
         }
         else {
             cout << "Invalid number of points.\n\n";
-            return 0;
         }
 
-        cout << "Random number generated: " << shotChance << " Shooting percentage: " << shootingPercentage << "\n" << endl;
+        cout << "Shot Chance: " << shotChance << " Shooting percentage: " << shootingPercentage << "\n" << endl;
 
         if (shotChance < (shootingPercentage + 50)) {
             cout << "Shot successful.\n" << endl;
             currentPlayer.setShotsMade();
+            currentPlayer.setShotsTaken();
             return points;
         }
         else {
@@ -135,7 +135,7 @@ int OpposingTeamPossesion(int& opponentscore) {
     return opponentscore;
 }
 
-player pickplayer(player playernames[5]) {
+player &pickplayer(player playernames[5]) {
     int randomnumber = (rand() % 5);
     return playernames[randomnumber];
     
@@ -148,40 +148,45 @@ int main() {
     int score2 = 0;
     int team1possessions = 0;
     int team2possessions = 0;
-    player currentPlayer = pickplayer(playernames);
+    int gamelength = 30;
+    player* currentPlayer = &pickplayer(playernames);
     cout << "*****************************************\n" << "New game has been started.\n"<< endl; 
 
-    while (team1possessions < 10 && team2possessions < 10) {
+    while (team1possessions < gamelength && team2possessions < gamelength) {
         // Asks the user to choose an option, moves to what they chose
-        cout << currentPlayer.getName() << " currently has the ball." << endl;
+        cout << currentPlayer->getName() << " currently has the ball.\n\n";
         cout << "Choose an Action:\n 1. Shoot \n 2. Pass \n 3. See Player Stats \n 4. See score\n";
         int choice;
         cin >> choice;
 
         //shoot
         if (choice == 1) {
-            int shotPoints = currentPlayer.takeShot(currentPlayer);
+            int shotPoints = currentPlayer->takeShot(*currentPlayer);
             score1 += shotPoints;
             if (shotPoints == 0) {
                 bool rebound = (rand() % 100) < 50;
                 if (!(rebound)) {
                     team1possessions += 1;
-                    currentPlayer = opposingTeam;
+                    currentPlayer = &opposingTeam;
                     cout << "You lost possession of the ball!\n";
                     score2 += OpposingTeamPossesion(score2);
                     team2possessions += 1;
-                    currentPlayer = pickplayer(playernames);
+                    cout << "Possesions Remaining: User - "<< (gamelength-team1possessions) << " Opponent - " << (gamelength -team2possessions) << "\n";
+                    cout << "*****************************************\n";
+                    currentPlayer = &pickplayer(playernames);
                 }
                 else{
-                    cout << "You made the rebound! Choose next action. \n";
+                    cout << "You made the rebound! Choose next action. \n\n";
                 }
             }
             else{
-                currentPlayer = opposingTeam;
-
+                team1possessions += 1;
+                currentPlayer = &opposingTeam;
                 score2 += OpposingTeamPossesion(score2);
                 team2possessions += 1;
-                currentPlayer = pickplayer(playernames);
+                cout << "Possesions Remaining: User - "<< (gamelength-team1possessions) << " Opponent - " << (gamelength -team2possessions) << "\n";
+                cout << "*****************************************\n";
+                currentPlayer = &pickplayer(playernames);
             }
             
 
@@ -191,33 +196,36 @@ int main() {
             int passedTo;
             cout << "Choose a player to pass the ball to: 1. Lebron , 2. MJ , 3. Kobe, 4, Steph , 5. Jokic\n";
             cin >> passedTo;
-            bool pass = currentPlayer.passBall(currentPlayer);
+            bool pass = currentPlayer->passBall(*currentPlayer);
             if (pass) {
-                currentPlayer = playernames[passedTo - 1];
+                currentPlayer = &playernames[passedTo - 1];
             
             }
             else {
                 cout << "You lost the ball!\n";
-                currentPlayer = opposingTeam;
+                currentPlayer = &opposingTeam;
                 score2 += OpposingTeamPossesion(score2);
+                team1possessions +=1;
                 team2possessions += 1;
-                currentPlayer = pickplayer(playernames);
-                cout << "Current player in possession of the ball: " << currentPlayer.getName() << endl;
+                cout << "Possesions Remaining: User - "<< (gamelength-team1possessions) << " Opponent - " << (gamelength -team2possessions) << "\n";
+                cout << "*****************************************\n";
+                currentPlayer = &pickplayer(playernames);
+                cout << "Current player in possession of the ball: " << currentPlayer->getName() << endl;
             }
         }
         //print stats
         else if (choice == 3) {
             cout << "*****************************************\n";
-            cout << "Player Name: " << currentPlayer.getName() << "\n";
-            cout << "Shots Taken: " << currentPlayer.getShotsTaken() << "\n";
-            cout << "Shots Made: " << currentPlayer.getShotsMade() << "\n";
-            cout << "Passes Attempted: " << currentPlayer.getPassesAttempted() << "\n";
-            cout << "Passes Made: " << currentPlayer.getPassesMade() << "\n";
+            cout << "Player Name: " << currentPlayer->getName() << "\n";
+            cout << "Shots Taken: " << currentPlayer->getShotsTaken() << "\n";
+            cout << "Shots Made: " << currentPlayer->getShotsMade() << "\n";
+            cout << "Passes Attempted: " << currentPlayer->getPassesAttempted() << "\n";
+            cout << "Passes Made: " << currentPlayer->getPassesMade() << "\n";
             cout << "******************************************\n";
         }
         //print score
         else if (choice == 4) {
-            cout << "Current score: " << score1 << "  -  " << score2 << endl;
+            cout << "Current score: " << score1 << "  -  " << score2 << "\n\n";
         }
     }
     string winner;
